@@ -1,6 +1,7 @@
 import allure
 
-from helpers.api_helpers import AssertionHelper
+from helpers.api_helpers import AssertionHelper, ValidationHelper
+from schemas.schemas import PostModel
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
@@ -17,4 +18,8 @@ class TestApi:
     @allure.title('Проверка получения поста по его ID')
     def test_get_post_by_id(self, api_client):
         response = api_client.get_post_by_id(6)
-        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                PostModel,
+                response.json(),
+            )
