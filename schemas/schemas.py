@@ -46,7 +46,3 @@ class PostModel(BaseModel):
     tags: List[str]
     class_list: List[str]
     _links: Dict[str, List[Dict]]
-
-
-class PostsModel(BaseModel):
-    root: List[PostModel]

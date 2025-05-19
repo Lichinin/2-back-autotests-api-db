@@ -5,6 +5,7 @@ import pytest
 
 from api_client.api_client import ApiClient
 from config import Paths
+from helpers.data_helpers import DataHelper
 
 
 @pytest.fixture(autouse=True)
@@ -52,3 +53,23 @@ def api_client(request):
     yield client
 
     logger.info('====> Fixture ApiClient teardown')
+
+
+@pytest.fixture
+def new_post(request, api_client):
+    logger = logging.getLogger(f'fixture.{request.fixturename}')
+    logger.info('====> Fixture setup started')
+    posts_list = []
+    num_entities = request.param if hasattr(request, 'param') else 1
+    for _ in range(num_entities):
+        logger.info('====> Fixture: Try create post for test')
+        response = api_client.create_post(DataHelper.post_setup_data())
+        logger.info(f'====> Fixture: Successful create post (id={response.json()["id"]}) for test.')
+        posts_list.append(response.json())
+
+    yield posts_list[0] if num_entities == 1 else posts_list
+
+    for post in posts_list:
+        logger.info(f'====> Fixture: Delete post (id={post["id"]}) for test')
+        api_client.delete_post(post['id'])
+    logger.info('====> Fixture setup exit')
