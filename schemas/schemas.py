@@ -51,3 +51,25 @@ class PostModel(BaseModel):
 class DeletePostModel(BaseModel):
     deleted: bool
     previous: PostModel
+
+
+class CommentModel(BaseModel):
+    id: int
+    post: int
+    parent: int
+    author: int
+    author_name: str
+    author_url: str
+    date: datetime
+    date_gmt: datetime
+    content: Dict[str, str]
+    link: str
+    status: str
+    type: str
+    author_avatar_urls: Dict
+    meta: List
+    _links: Dict[str, List[Dict]]
+
+class DeleteCommentModel(BaseModel):
+    deleted: bool
+    previous: CommentModel

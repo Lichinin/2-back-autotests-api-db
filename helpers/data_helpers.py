@@ -22,3 +22,14 @@ class DataHelper:
             "title": f'Updated_{post_data["title"]["raw"]}',
             "content": f'Updated_{post_data["content"]["raw"]}'
         }
+
+    @staticmethod
+    @allure.step('Сформировать значения полей нового комментария')
+    def comment_setup_data(post_id) -> dict:
+        return {
+            "post": post_id,
+            "author_name": fake.sentence(),
+            "author_email": fake.email(),
+            "content": fake.sentence(),
+            "status": "approve"
+        }
