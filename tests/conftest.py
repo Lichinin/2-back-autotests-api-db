@@ -6,6 +6,7 @@ import pytest
 from api_client.api_client import ApiClient
 from config import Paths
 from helpers.data_helpers import DataHelper
+from helpers.db_helper import DatabaseHelper
 
 
 @pytest.fixture(autouse=True)
@@ -73,3 +74,15 @@ def new_post(request, api_client):
         logger.info(f'====> Fixture: Delete post (id={post["id"]}) for test')
         api_client.delete_post(post['id'])
     logger.info('====> Fixture setup exit')
+
+
+@pytest.fixture()
+def db_connection():
+    logger = logging.getLogger('fixture.db_connection')
+    logger.info('====> Connect to database')
+    db = DatabaseHelper().connect()
+
+    yield db
+
+    logger.info('====> Close database connection')
+    db.close_connection()

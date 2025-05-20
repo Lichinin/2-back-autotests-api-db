@@ -37,3 +37,21 @@ class AssertionHelper:
     ):
         assert actual_status_code == expected_status_code, \
                 f'Excepted status code {expected_status_code}, got {actual_status_code}'
+
+    @staticmethod
+    @allure.step('Получить и проверить элемент в базе данных')
+    def check_element_from_db(
+        created_element,
+        db
+    ):
+        logger = logging.getLogger('Get element form database')
+        logger.info('* Execute query')
+        result = db.execute_query(
+            f"SELECT * FROM wp_posts WHERE id = {created_element['id']}",
+        )
+        logger.info(f'* Assert {created_element["id"]} == {result["ID"]}')
+        assert created_element['id'] == result['ID']
+        logger.info(f'* Assert {created_element["title"]["raw"]} == {result["post_title"]}')
+        assert created_element['title']['raw'] == result['post_title']
+        logger.info(f'* Assert {created_element["content"]["raw"]} == {result["post_content"]}')
+        assert created_element["content"]["raw"] == result['post_content']
