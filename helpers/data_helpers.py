@@ -35,7 +35,7 @@ class DataHelper:
         }
 
     @staticmethod
-    @allure.step('Сформировать новые значения полей для существующего поста')
+    @allure.step('Сформировать новые значения полей для существующего комментария')
     def updated_comment_data(comment_data) -> dict:
         return {
             "content": f'Updated_{comment_data["content"]["raw"]}'

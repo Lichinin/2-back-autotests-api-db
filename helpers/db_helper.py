@@ -37,7 +37,5 @@ class DatabaseHelper:
             raise Exception(f"Ошибка выполнения запроса: {e}")
 
     def close_connection(self):
-        """Закрывает соединение с БД."""
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            print("Соединение с БД закрыто")
