@@ -1,4 +1,5 @@
 import allure
+import pytest
 
 from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
@@ -11,7 +12,8 @@ class TestApi:
 
     @allure.story('Получить все посты')
     @allure.title('Проверка получения всех постов')
-    def test_get_all_posts(self, api_client):
+    @pytest.mark.parametrize("setup_post", [3], indirect=True)
+    def test_get_all_posts(self, setup_post, api_client):
         response = api_client.get_all_posts()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -65,3 +67,6 @@ class TestApi:
                 DeletePostModel,
                 response.json(),
             )
+        with allure.step('Проверить данные удалённого поста'):
+            assert response.json()['deleted'] is True
+            assert response.json()['previous']['id'] == created_post['id']
