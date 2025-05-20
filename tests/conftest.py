@@ -57,7 +57,7 @@ def api_client(request):
 
 
 @pytest.fixture
-def new_post(request, api_client):
+def setup_post(request, api_client):
     logger = logging.getLogger(f'fixture.{request.fixturename}')
     logger.info('====> Fixture setup started')
     posts_list = []
@@ -86,3 +86,31 @@ def db_connection():
 
     logger.info('====> Close database connection')
     db.close_connection()
+
+
+@pytest.fixture()
+def delete_created_post(api_client):
+    post_id = None
+    logger = logging.getLogger("fixture.delete_created_post")
+    logger.info("====> Setup fixture: delete_created_post")
+
+    def _set_post_id(id):
+        nonlocal post_id
+        post_id = id
+
+    yield _set_post_id
+
+    logger.info(f"====> Teardown: Delete post with ID={post_id}")
+    api_client.delete_post(post_id)
+
+
+@pytest.fixture
+def created_post(api_client):
+    logger = logging.getLogger("fixture.created_post")
+    logger.info('====> Creating single post')
+
+    response = api_client.create_post(DataHelper.post_setup_data())
+    post_data = response.json()
+    logger.info(f'====> Created post with ID={post_data["id"]}')
+
+    return post_data
