@@ -1,11 +1,22 @@
-# db_helper.py
-
 import mysql.connector
 from mysql.connector import Error
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class DatabaseHelper:
-    def __init__(self, host='localhost', user='wordpress', password='wordpress', database='wordpress', port=3306):
+    def __init__(
+        self,
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=os.getenv("DB_PORT")
+    ):
         self.host = host
         self.user = user
         self.password = password
