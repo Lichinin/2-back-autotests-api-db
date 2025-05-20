@@ -39,12 +39,12 @@ class AssertionHelper:
                 f'Excepted status code {expected_status_code}, got {actual_status_code}'
 
     @staticmethod
-    @allure.step('Получить и проверить элемент в базе данных')
-    def check_element_from_db(
+    @allure.step('Получить и проверить пост в базе данных')
+    def check_post_from_db(
         created_element,
         db
     ):
-        logger = logging.getLogger('Get element form database')
+        logger = logging.getLogger('Get post form database')
         logger.info('* Execute query')
         result = db.execute_query(
             f"SELECT * FROM wp_posts WHERE id = {created_element['id']}",
@@ -55,3 +55,21 @@ class AssertionHelper:
         assert created_element['title']['raw'] == result['post_title']
         logger.info(f'* Assert {created_element["content"]["raw"]} == {result["post_content"]}')
         assert created_element["content"]["raw"] == result['post_content']
+
+    @staticmethod
+    @allure.step('Получить и проверить комментарий в базе данных')
+    def check_comment_from_db(
+        created_element,
+        db
+    ):
+        logger = logging.getLogger('Get comment form database')
+        logger.info('* Execute query')
+        result = db.execute_query(
+            f"SELECT * FROM wp_comments WHERE comment_id = {created_element['id']}",
+        )
+        logger.info(f'* Assert {created_element["id"]} == {result["comment_ID"]}')
+        assert created_element['id'] == result['comment_ID']
+        logger.info(f'* Assert {created_element["author_name"]} == {result["comment_author"]}')
+        assert created_element['author_name'] == result['comment_author']
+        logger.info(f'* Assert {created_element["content"]["raw"]} == {result["comment_content"]}')
+        assert created_element["content"]["raw"] == result['comment_content']

@@ -70,6 +70,7 @@ class CommentModel(BaseModel):
     meta: List
     _links: Dict[str, List[Dict]]
 
+
 class DeleteCommentModel(BaseModel):
     deleted: bool
     previous: CommentModel

@@ -51,3 +51,8 @@ class ApiClient(BaseApiClient):
     def delete_comment(self, post_id: int) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/comments/{post_id}?force=true'
         return self._delete(url)
+
+    @allure.step('Редактировать комментарий по ID')
+    def patch_comment(self, id, comment_data: dict) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/comments/{id}'
+        return self._patch(url, json=comment_data)
