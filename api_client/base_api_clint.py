@@ -4,8 +4,12 @@ import logging
 import allure
 import requests
 from requests.exceptions import RequestException
+import os
 
-from authconfig import AuthConfig
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class BaseApiClient:
@@ -14,7 +18,7 @@ class BaseApiClient:
         self.auth_token = self._generate_basic_auth_token()
 
     def _generate_basic_auth_token(self) -> str:
-        credentials = f"{AuthConfig.USERNAME}:{AuthConfig.PASSWORD}"
+        credentials = f"{os.getenv('USERNAME')}:{os.getenv('PASSWORD')}"
         return base64.b64encode(credentials.encode()).decode('utf-8')
 
     @allure.step('Выполнить {method} запрос на {url}')
