@@ -1,4 +1,10 @@
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class Paths:
@@ -7,5 +13,5 @@ class Paths:
 
 class APiRoutes:
 
-    BASE_URL = 'http://localhost:8000'
+    BASE_URL = os.getenv('BASE_URL')
     API_VER = '/wp-json/wp/v2'
