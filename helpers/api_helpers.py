@@ -2,6 +2,7 @@ import logging
 
 import allure
 from helpers.db_helper import DatabaseHelper
+from pydantic import ValidationError
 
 class ValidationHelper:
 
@@ -21,10 +22,10 @@ class ValidationHelper:
                     model(**unit)
             logger.info(f'entity data: {response_data}')
             logger.info('* Scheme is valid.')
-        except Exception as e:
+        except ValidationError as e:
             error_msg = f'Validation error: {str(e)}'
             logger.error(error_msg)
-            raise AssertionError(error_msg)
+            raise AssertionError(error_msg) from e
 
 
 class AssertionHelper:
