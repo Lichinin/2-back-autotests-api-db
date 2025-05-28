@@ -41,9 +41,7 @@ class BaseApiClient:
             return response
         except RequestException:
             self.logger.error(f'Failed {method} request to {url} ')
-            raise Exception(
-                f'Failed {method} request to {url} '
-            )
+            raise
 
     @allure.step('Выполнить GET запрос')
     def _get(self, url: str) -> requests.Response:
