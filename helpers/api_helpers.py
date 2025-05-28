@@ -1,7 +1,7 @@
 import logging
 
 import allure
-
+from helpers.db_helper import DatabaseHelper
 
 class ValidationHelper:
 
@@ -41,8 +41,8 @@ class AssertionHelper:
     @staticmethod
     @allure.step('Получить и проверить пост в базе данных')
     def check_post_from_db(
-        created_element,
-        db
+        created_element: dict,
+        db: DatabaseHelper
     ):
         logger = logging.getLogger('Get post form database')
         logger.info('* Execute query')
@@ -59,8 +59,8 @@ class AssertionHelper:
     @staticmethod
     @allure.step('Получить и проверить комментарий в базе данных')
     def check_comment_from_db(
-        created_element,
-        db
+        created_element: dict,
+        db: DatabaseHelper
     ):
         logger = logging.getLogger('Get comment form database')
         logger.info('* Execute query')

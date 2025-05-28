@@ -37,7 +37,7 @@ class DatabaseHelper:
         except Error as e:
             raise Exception(f"Ошибка подключения к БД: {e}")
 
-    def execute_query(self, query, params=None):
+    def execute_query(self, query: str, params=None):
         cursor = self.connection.cursor(dictionary=True)
         try:
             cursor.execute(query, params or ())

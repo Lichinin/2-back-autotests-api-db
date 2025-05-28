@@ -17,7 +17,7 @@ class DataHelper:
 
     @staticmethod
     @allure.step('Сформировать новые значения полей для существующего поста')
-    def updated_post_data(post_data) -> dict:
+    def updated_post_data(post_data: dict) -> dict:
         return {
             "title": f'Updated_{post_data["title"]["raw"]}',
             "content": f'Updated_{post_data["content"]["raw"]}'
@@ -25,7 +25,7 @@ class DataHelper:
 
     @staticmethod
     @allure.step('Сформировать значения полей нового комментария')
-    def comment_setup_data(post_id) -> dict:
+    def comment_setup_data(post_id: int) -> dict:
         return {
             "post": post_id,
             "author_name": fake.sentence(),
@@ -36,7 +36,7 @@ class DataHelper:
 
     @staticmethod
     @allure.step('Сформировать новые значения полей для существующего комментария')
-    def updated_comment_data(comment_data) -> dict:
+    def updated_comment_data(comment_data: dict) -> dict:
         return {
             "content": f'Updated_{comment_data["content"]["raw"]}'
         }

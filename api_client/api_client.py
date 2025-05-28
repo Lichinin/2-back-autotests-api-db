@@ -23,7 +23,7 @@ class ApiClient(BaseApiClient):
         return self._post(url, json=post_data)
 
     @allure.step('Редактировать пост по ID')
-    def patch_post(self, id, post_data: dict) -> requests.Response:
+    def patch_post(self, id: int, post_data: dict) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/posts/{id}'
         return self._patch(url, json=post_data)
 
@@ -53,6 +53,6 @@ class ApiClient(BaseApiClient):
         return self._delete(url)
 
     @allure.step('Редактировать комментарий по ID')
-    def patch_comment(self, id, comment_data: dict) -> requests.Response:
+    def patch_comment(self, id: int, comment_data: dict) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/comments/{id}'
         return self._patch(url, json=comment_data)

@@ -3,6 +3,7 @@ import pytest
 
 from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
+from helpers.db_helper import DatabaseHelper
 from schemas.schemas import DeletePostModel, PostModel, CommentModel, DeleteCommentModel
 from api_client.api_client import ApiClient
 
@@ -14,7 +15,7 @@ class TestPostsApi:
     @allure.story('Получить все посты')
     @allure.title('POSTS_API_01: Проверка получения всех постов')
     @pytest.mark.parametrize("setup_post", [3], indirect=True)
-    def test_get_all_posts(self, setup_post, api_client: ApiClient):
+    def test_get_all_posts(self, setup_post: list, api_client: ApiClient):
         response = api_client.get_all_posts()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -25,7 +26,7 @@ class TestPostsApi:
 
     @allure.story('Получить пост')
     @allure.title('POSTS_API_02: Проверка получения поста по его ID')
-    def test_get_post_by_id(self, setup_post, api_client: ApiClient):
+    def test_get_post_by_id(self, setup_post: dict, api_client: ApiClient):
         response = api_client.get_post_by_id(setup_post['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -36,7 +37,12 @@ class TestPostsApi:
 
     @allure.story('Создать пост')
     @allure.title('POSTS_API_03: Проверка создания поста')
-    def test_create_post(self, api_client: ApiClient, db_connection, delete_created_post):
+    def test_create_post(
+        self,
+        api_client: ApiClient,
+        db_connection: DatabaseHelper,
+        delete_created_post
+    ):
         response = api_client.create_post(DataHelper.post_setup_data())
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -50,7 +56,12 @@ class TestPostsApi:
 
     @allure.story('Редактировать пост')
     @allure.title('POSTS_API_04: Проверка редактирования поста')
-    def test_patch_post(self, api_client: ApiClient, setup_post, db_connection):
+    def test_patch_post(
+        self,
+        api_client: ApiClient,
+        setup_post: dict,
+        db_connection: DatabaseHelper
+    ):
         response = api_client.patch_post(setup_post['id'], DataHelper.updated_post_data(setup_post))
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -63,7 +74,7 @@ class TestPostsApi:
 
     @allure.story('Удалить пост')
     @allure.title('POSTS_API_05: Проверка удаления поста')
-    def test_delete_post(self, api_client: ApiClient, created_post):
+    def test_delete_post(self, api_client: ApiClient, created_post: dict):
         response = api_client.delete_post(created_post['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -93,7 +104,7 @@ class TestCommentsApi:
 
     @allure.story('Получить комментарий')
     @allure.title('COMMENTS_API_02: Проверка получения комментария по его ID')
-    def test_get_comment_by_id(self, setup_post, api_client: ApiClient):
+    def test_get_comment_by_id(self, setup_post: dict, api_client: ApiClient):
         with allure.step('Создать комментарий для теста'):
             comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
         response = api_client.get_comment_by_id(comment['id'])
@@ -106,7 +117,12 @@ class TestCommentsApi:
 
     @allure.story('Создать комментарий')
     @allure.title('COMMENTS_API_03: Проверка создания комментария')
-    def test_create_comment(self, setup_post, api_client: ApiClient, db_connection):
+    def test_create_comment(
+        self,
+        setup_post: dict,
+        api_client: ApiClient,
+        db_connection: DatabaseHelper
+    ):
         response = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id']))
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -119,7 +135,12 @@ class TestCommentsApi:
 
     @allure.story('Редактировать комментарий')
     @allure.title('COMMENTS_API_04: Проверка редактирования комментария')
-    def test_patch_comment(self, api_client: ApiClient, setup_post, db_connection):
+    def test_patch_comment(
+        self,
+        api_client: ApiClient,
+        setup_post: dict,
+        db_connection: DatabaseHelper
+    ):
         with allure.step('Создать комментарий для теста'):
             comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
         response = api_client.patch_comment(comment['id'], DataHelper.updated_comment_data(comment))
@@ -134,7 +155,7 @@ class TestCommentsApi:
 
     @allure.story('Удалить комментарий')
     @allure.title('COMMENTS_API_05: Проверка удаления комментария')
-    def test_delete_comment(self, setup_post, api_client: ApiClient):
+    def test_delete_comment(self, setup_post: dict, api_client: ApiClient):
         with allure.step('Создать комментарий для теста'):
             comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
         response = api_client.delete_comment(comment['id'])
