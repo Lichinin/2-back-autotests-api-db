@@ -80,12 +80,8 @@ def setup_post(request, api_client):
 def db_connection():
     logger = logging.getLogger('fixture.db_connection')
     logger.info('====> Connect to database')
-    db = DatabaseHelper().connect()
-
-    yield db
-
-    logger.info('====> Close database connection')
-    db.close_connection()
+    with DatabaseHelper() as db:
+        yield db
 
 
 @pytest.fixture()
