@@ -45,7 +45,7 @@ def configure_logging(request):
     test_logger.info(f'Test finished: {request.node.name}\n')
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture()
 def api_client(request):
     logger = logging.getLogger(f'fixture.{request.fixturename}')
     logger.info('====> Fixture ApiClient started')
