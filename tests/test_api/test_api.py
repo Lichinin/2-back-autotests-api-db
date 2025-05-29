@@ -44,7 +44,8 @@ class TestPostsApi:
         db_connection: DatabaseHelper,
         posts_to_delete_list: list
     ):
-        response = api_client.create_post(DataHelper.post_setup_data(), posts_to_delete_list)
+        response = api_client.create_post(DataHelper.post_setup_data())
+        posts_to_delete_list.append(response.json())
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -139,7 +140,7 @@ class TestCommentsApi:
         self,
         api_client: ApiClient,
         setup_post: dict,
-        db_connection: DatabaseHelper
+        db_connection: DatabaseHelper,
     ):
         with allure.step('Создать комментарий для теста'):
             comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
