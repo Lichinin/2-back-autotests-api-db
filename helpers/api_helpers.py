@@ -43,7 +43,7 @@ class AssertionHelper:
 
     @staticmethod
     @allure.step('Получить и проверить пост в базе данных')
-    def check_post_from_db(
+    def assert_post_from_db(
         created_element: dict,
         db: DatabaseHelper
     ):
@@ -61,7 +61,7 @@ class AssertionHelper:
 
     @staticmethod
     @allure.step('Получить и проверить комментарий в базе данных')
-    def check_comment_from_db(
+    def assert_comment_from_db(
         created_element: dict,
         db: DatabaseHelper
     ):
@@ -76,3 +76,15 @@ class AssertionHelper:
         assert created_element['author_name'] == result['comment_author']
         logger.info(f'* Assert {created_element["content"]["raw"]} == {result["comment_content"]}')
         assert created_element["content"]["raw"] == result['comment_content']
+
+    @staticmethod
+    @allure.step('Проверить, что созданные для теста комментарии есть в списке полученных')
+    def assert_comments_ids(
+        created_comments_id: list,
+        all_commmets: list
+    ):
+        logger = logging.getLogger('assert created comments ids in all comments id')
+        all_comments_ids = [comment['id'] for comment in all_commmets.json()]
+        for id in created_comments_id:
+            logger.info(f'* Assert comment_id={id} in id_list={all_comments_ids}')
+            assert id in all_comments_ids

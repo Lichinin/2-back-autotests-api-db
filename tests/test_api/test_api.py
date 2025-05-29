@@ -24,6 +24,9 @@ class TestPostsApi:
                 PostModel,
                 response.json(),
             )
+        with allure.step('Проверить, что список постов содержит нужное количество записей'):
+            assert len(response.json()) >= len(setup_post), \
+                f'Ожидается минимум {len(setup_post)} постов, получено {len(response.json())}'
 
     @allure.story('Получить пост')
     @allure.title('POSTS_API_02: Проверка получения поста по его ID')
@@ -35,6 +38,9 @@ class TestPostsApi:
                 PostModel,
                 response.json(),
             )
+        with allure.step('Проверить, что получили ожидаемый пост'):
+            assert response.json()['id'] == setup_post['id'], \
+                f'Ожидается пост с id = {setup_post["id"]}, получен пост с id = {response.json()["id"]}'
 
     @allure.story('Создать пост')
     @allure.title('POSTS_API_03: Проверка создания поста')
@@ -53,7 +59,7 @@ class TestPostsApi:
                 response.json(),
             )
         with allure.step('Проверить данные поста в БД'):
-            AssertionHelper.check_post_from_db(response.json(), db_connection)
+            AssertionHelper.assert_post_from_db(response.json(), db_connection)
 
     @allure.story('Редактировать пост')
     @allure.title('POSTS_API_04: Проверка редактирования поста')
@@ -71,7 +77,7 @@ class TestPostsApi:
                 response.json(),
             )
         with allure.step('Проверить данные поста в БД'):
-            AssertionHelper.check_post_from_db(response.json(), db_connection)
+            AssertionHelper.assert_post_from_db(response.json(), db_connection)
 
     @allure.story('Удалить пост')
     @allure.title('POSTS_API_05: Проверка удаления поста')
@@ -94,7 +100,13 @@ class TestCommentsApi:
 
     @allure.story('Получить все комментарии')
     @allure.title('COMMENTS_API_01: Проверка получения всех комментариев')
-    def test_get_all_comments(self, api_client: ApiClient):
+    @pytest.mark.parametrize("setup_post", [3], indirect=True)
+    def test_get_all_comments(self, setup_post: list, api_client: ApiClient):
+        with allure.step('Создать комментарии для теста'):
+            created_comments_ids = []
+            for post in setup_post:
+                comment = api_client.create_comment(DataHelper.comment_setup_data(post['id'])).json()
+                created_comments_ids.append(comment['id'])
         response = api_client.get_all_comments()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -102,6 +114,8 @@ class TestCommentsApi:
                 CommentModel,
                 response.json(),
             )
+        with allure.step('Проверить что созданные ранее комментарии есть в списке полученных'):
+            AssertionHelper.assert_comments_ids(created_comments_ids, response)
 
     @allure.story('Получить комментарий')
     @allure.title('COMMENTS_API_02: Проверка получения комментария по его ID')
@@ -115,6 +129,9 @@ class TestCommentsApi:
                 CommentModel,
                 response.json(),
             )
+        with allure.step('Проверить, что получили ожидаемый комментарий'):
+            assert response.json()['id'] == comment['id'], \
+                f'Ожидается комментарий с id={comment["id"]}, получен комментарий с id={response.json()["id"]}'
 
     @allure.story('Создать комментарий')
     @allure.title('COMMENTS_API_03: Проверка создания комментария')
@@ -132,7 +149,7 @@ class TestCommentsApi:
                 response.json(),
             )
         with allure.step('Проверить данные комментария в БД'):
-            AssertionHelper.check_comment_from_db(response.json(), db_connection)
+            AssertionHelper.assert_comment_from_db(response.json(), db_connection)
 
     @allure.story('Редактировать комментарий')
     @allure.title('COMMENTS_API_04: Проверка редактирования комментария')
@@ -152,7 +169,7 @@ class TestCommentsApi:
                 response.json(),
             )
         with allure.step('Проверить данные комментария в БД'):
-            AssertionHelper.check_comment_from_db(response.json(), db_connection)
+            AssertionHelper.assert_comment_from_db(response.json(), db_connection)
 
     @allure.story('Удалить комментарий')
     @allure.title('COMMENTS_API_05: Проверка удаления комментария')
@@ -166,3 +183,6 @@ class TestCommentsApi:
                 DeleteCommentModel,
                 response.json(),
             )
+        with allure.step('Проверить данные удалённого комментария'):
+            assert response.json()['deleted'] is True
+            assert response.json()['previous']['id'] == comment['id']
