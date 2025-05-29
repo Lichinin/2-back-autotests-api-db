@@ -1,13 +1,11 @@
 import base64
 import logging
+import os
 
 import allure
 import requests
-from requests.exceptions import RequestException
-import os
-
 from dotenv import load_dotenv
-
+from requests.exceptions import RequestException
 
 load_dotenv()
 

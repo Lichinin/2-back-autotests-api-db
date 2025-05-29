@@ -18,9 +18,11 @@ class ApiClient(BaseApiClient):
         return self._get(url)
 
     @allure.step('Создать пост')
-    def create_post(self, post_data: dict) -> requests.Response:
+    def create_post(self, post_data: dict, posts_list) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/posts'
-        return self._post(url, json=post_data)
+        response = self._post(url, json=post_data)
+        posts_list.append(response.json())
+        return response
 
     @allure.step('Редактировать пост по ID')
     def patch_post(self, id: int, post_data: dict) -> requests.Response:

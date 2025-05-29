@@ -85,19 +85,16 @@ def db_connection():
 
 
 @pytest.fixture()
-def delete_created_post(api_client):
-    post_id = None
+def posts_to_delete_list(api_client):
     logger = logging.getLogger("fixture.delete_created_post")
     logger.info("====> Setup fixture: delete_created_post")
+    posts = []
 
-    def _set_post_id(id):
-        nonlocal post_id
-        post_id = id
+    yield posts
 
-    yield _set_post_id
-
-    logger.info(f"====> Teardown: Delete post with ID={post_id}")
-    api_client.delete_post(post_id)
+    for post in posts:
+        logger.info(f"====> Teardown: Delete post with ID={post['id']}")
+        api_client.delete_post(post['id'])
 
 
 @pytest.fixture

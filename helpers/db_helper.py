@@ -1,9 +1,8 @@
-import mysql.connector
-from mysql.connector import Error
 import os
 
+import mysql.connector
 from dotenv import load_dotenv
-
+from mysql.connector import Error
 
 load_dotenv()
 

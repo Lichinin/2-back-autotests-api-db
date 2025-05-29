@@ -1,8 +1,10 @@
 import logging
 
 import allure
-from helpers.db_helper import DatabaseHelper
 from pydantic import ValidationError
+
+from helpers.db_helper import DatabaseHelper
+
 
 class ValidationHelper:
 

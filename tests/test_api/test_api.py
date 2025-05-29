@@ -1,11 +1,12 @@
 import allure
 import pytest
 
+from api_client.api_client import ApiClient
 from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
 from helpers.db_helper import DatabaseHelper
-from schemas.schemas import DeletePostModel, PostModel, CommentModel, DeleteCommentModel
-from api_client.api_client import ApiClient
+from schemas.schemas import (CommentModel, DeleteCommentModel, DeletePostModel,
+                             PostModel)
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
@@ -41,9 +42,9 @@ class TestPostsApi:
         self,
         api_client: ApiClient,
         db_connection: DatabaseHelper,
-        delete_created_post
+        posts_to_delete_list: list
     ):
-        response = api_client.create_post(DataHelper.post_setup_data())
+        response = api_client.create_post(DataHelper.post_setup_data(), posts_to_delete_list)
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -52,7 +53,6 @@ class TestPostsApi:
             )
         with allure.step('Проверить данные поста в БД'):
             AssertionHelper.check_post_from_db(response.json(), db_connection)
-        delete_created_post(response.json()['id'])
 
     @allure.story('Редактировать пост')
     @allure.title('POSTS_API_04: Проверка редактирования поста')
