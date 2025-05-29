@@ -10,17 +10,17 @@ load_dotenv()
 class DatabaseHelper:
     def __init__(
         self,
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        port=os.getenv("DB_PORT")
+        host=None,
+        user=None,
+        password=None,
+        database=None,
+        port=None
     ):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.database = database
-        self.port = port
+        self.host = os.getenv("DB_HOST")
+        self.user = os.getenv("DB_USER")
+        self.password = os.getenv("DB_PASSWORD")
+        self.database = os.getenv("DB_NAME")
+        self.port = os.getenv("DB_PORT")
         self.connection = None
 
     def connect(self):
