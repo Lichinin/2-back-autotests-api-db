@@ -6,7 +6,7 @@ from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
 from helpers.db_helper import DatabaseHelper
 from schemas.schemas import (CommentModel, DeleteCommentModel, DeletePostModel,
-                             PostModel, UserPostModel)
+                             PostModel, DeleteUserModel, UserPostModel)
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
@@ -210,3 +210,17 @@ class TestUsersApi:
             )
         with allure.step('Проверить данные комментария в БД'):
             AssertionHelper.assert_user_from_db(response.json(), db_connection)
+
+    @allure.story('Удалить пользователя')
+    @allure.title('USERS_API_05: Проверка удаления пользователя')
+    def test_delete_user(self, created_user: dict, api_client: ApiClient):
+        response = api_client.delete_user(created_user['id'])
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                DeleteUserModel,
+                response.json(),
+            )
+        with allure.step('Проверить данные удалённого комментария'):
+            assert response.json()['deleted'] is True
+            assert response.json()['previous']['id'] == created_user['id']

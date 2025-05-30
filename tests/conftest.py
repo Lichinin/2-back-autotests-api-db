@@ -120,3 +120,14 @@ def users_to_delete_list(api_client):
     for user in users:
         logger.info(f"====> Teardown: Delete user with ID={user['id']}")
         api_client.delete_user(user['id'])
+
+@pytest.fixture
+def created_user(api_client):
+    logger = logging.getLogger("fixture.created_user")
+    logger.info('====> Creating single user')
+
+    response = api_client.create_user(DataHelper.user_setup_data())
+    user_data = response.json()
+    logger.info(f'====> Created post with ID={user_data["id"]}')
+
+    return user_data

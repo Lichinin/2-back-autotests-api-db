@@ -108,3 +108,8 @@ class UserPostModel(BaseModel):
     avatar_urls: Dict[str, str]
     meta: Dict[str, List]
     _links: Dict[str, List[Dict]]
+
+
+class DeleteUserModel(BaseModel):
+    deleted: bool
+    previous: UserPostModel
