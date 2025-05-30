@@ -63,6 +63,11 @@ class ApiClient(BaseApiClient):
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users'
         return self._get(url)
 
+    @allure.step('Получить пользователя по id')
+    def get_user_by_id(self, post_id: int) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users/{post_id}'
+        return self._get(url)
+
     @allure.step('Создать пост')
     def create_user(self, user_data: dict) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users'

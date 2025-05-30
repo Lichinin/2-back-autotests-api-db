@@ -207,6 +207,20 @@ class TestUsersApi:
             assert len(response.json()) >= len(setup_user), \
                 f'Ожидается минимум {len(setup_user)} пользователей, получено {len(response.json())}'
 
+    @allure.story('Получить пользователя')
+    @allure.title('POSTS_API_02: Проверка получения пользователя по его ID')
+    def test_get_user_by_id(self, setup_user: dict, api_client: ApiClient):
+        response = api_client.get_user_by_id(setup_user['id'])
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                UserGetModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что получили ожидаемого пользователя'):
+            assert response.json()['id'] == setup_user['id'], \
+                f'Ожидается пользователь с id = {setup_user["id"]}, получен пользователь с id = {response.json()["id"]}'
+
     @allure.story('Создать пользователя')
     @allure.title('USERS_API_03: Проверка создания пользователя')
     def test_create_user(
