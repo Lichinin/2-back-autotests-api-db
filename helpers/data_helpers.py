@@ -40,3 +40,13 @@ class DataHelper:
         return {
             "content": f'Updated_{comment_data["content"]["raw"]}'
         }
+
+    @staticmethod
+    @allure.step('Сформировать значения полей нового пользователя')
+    def user_setup_data() -> dict:
+        return {
+            "username": fake.name(),
+            "email": fake.email(),
+            "password": fake.password(length=8),
+            "roles": ["subscriber"]
+        }

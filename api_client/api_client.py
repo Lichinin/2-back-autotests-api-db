@@ -57,3 +57,24 @@ class ApiClient(BaseApiClient):
     def patch_comment(self, id: int, comment_data: dict) -> requests.Response:
         url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/comments/{id}'
         return self._patch(url, json=comment_data)
+
+    @allure.step('Получить список всех пользователей')
+    def get_all_users(self) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users'
+        return self._get(url)
+
+    @allure.step('Создать пост')
+    def create_user(self, user_data: dict) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users'
+
+        return self._post(url, json=user_data)
+
+    # @allure.step('Редактировать пост по ID')
+    # def patch_post(self, id: int, post_data: dict) -> requests.Response:
+    #     url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/posts/{id}'
+    #     return self._patch(url, json=post_data)
+
+    @allure.step('Удалить пользователя по ID')
+    def delete_user(self, user_id: int) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users/{user_id}?reassign=1&force=true'
+        return self._delete(url)

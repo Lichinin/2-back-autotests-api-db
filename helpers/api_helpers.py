@@ -88,3 +88,22 @@ class AssertionHelper:
         for id in created_comments_id:
             logger.info(f'* Assert comment_id={id} in id_list={all_comments_ids}')
             assert id in all_comments_ids
+
+
+    @staticmethod
+    @allure.step('Получить и проверить пользователя в базе данных')
+    def assert_user_from_db(
+        created_element: dict,
+        db: DatabaseHelper
+    ):
+        logger = logging.getLogger('Get user form database')
+        logger.info('* Execute query')
+        result = db.execute_query(
+            f"SELECT * FROM wp_users WHERE id = {created_element['id']}",
+        )
+        logger.info(f'* Assert {created_element["id"]} == {result["ID"]}')
+        assert created_element['id'] == result['ID']
+        logger.info(f'* Assert {created_element["name"]} == {result["display_name"]}')
+        assert created_element['name'] == result['display_name']
+        logger.info(f'* Assert {created_element["slug"]} == {result["user_nicename"]}')
+        assert created_element["slug"] == result['user_nicename']

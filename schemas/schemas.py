@@ -74,3 +74,37 @@ class CommentModel(BaseModel):
 class DeleteCommentModel(BaseModel):
     deleted: bool
     previous: CommentModel
+
+
+class UserGetModel(BaseModel):
+    id: int
+    name: str
+    url: str
+    description: str
+    link: str
+    slug: str
+    avatar_urls: Dict[str, str]
+    meta: List
+    _links: Dict[str, List[Dict]]
+
+
+class UserPostModel(BaseModel):
+    id: int
+    username: str
+    name: str
+    first_name: str
+    last_name: str
+    email: str
+    url: str
+    description: str
+    link: str
+    locale: str
+    nickname: str
+    slug: str
+    roles: List[str]
+    registered_date: datetime
+    capabilities: Dict[str, bool]
+    extra_capabilities: Dict[str, bool]
+    avatar_urls: Dict[str, str]
+    meta: Dict[str, List]
+    _links: Dict[str, List[Dict]]

@@ -72,7 +72,7 @@ def setup_post(request, api_client):
 
     for post in posts_list:
         logger.info(f'====> Fixture: Delete post (id={post["id"]}) for test')
-        api_client.delete_post(post['id'])
+        api_client.delete_user(post['id'])
     logger.info('====> Fixture setup exit')
 
 
@@ -107,3 +107,16 @@ def created_post(api_client):
     logger.info(f'====> Created post with ID={post_data["id"]}')
 
     return post_data
+
+
+@pytest.fixture()
+def users_to_delete_list(api_client):
+    logger = logging.getLogger("fixture.users_to_delete_list")
+    logger.info("====> Setup fixture: users_to_delete_list")
+    users = []
+
+    yield users
+
+    for user in users:
+        logger.info(f"====> Teardown: Delete user with ID={user['id']}")
+        api_client.delete_user(user['id'])
