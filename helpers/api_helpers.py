@@ -107,3 +107,5 @@ class AssertionHelper:
         assert created_element['name'] == result['display_name']
         logger.info(f'* Assert {created_element["slug"]} == {result["user_nicename"]}')
         assert created_element["slug"] == result['user_nicename']
+        logger.info(f'* Assert {created_element["email"]} == {result["user_email"]}')
+        assert created_element['email'] == result['user_email']

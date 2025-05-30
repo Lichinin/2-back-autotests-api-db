@@ -208,7 +208,7 @@ class TestUsersApi:
                 f'Ожидается минимум {len(setup_user)} пользователей, получено {len(response.json())}'
 
     @allure.story('Получить пользователя')
-    @allure.title('POSTS_API_02: Проверка получения пользователя по его ID')
+    @allure.title('USERS_API_02: Проверка получения пользователя по его ID')
     def test_get_user_by_id(self, setup_user: dict, api_client: ApiClient):
         response = api_client.get_user_by_id(setup_user['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
@@ -237,7 +237,25 @@ class TestUsersApi:
                 UserPostModel,
                 response.json(),
             )
-        with allure.step('Проверить данные комментария в БД'):
+        with allure.step('Проверить данные пользователя в БД'):
+            AssertionHelper.assert_user_from_db(response.json(), db_connection)
+
+    @allure.story('Редактировать пользователя')
+    @allure.title('USERS_API_04: Проверка редактирования пользователя')
+    def test_patch_user(
+        self,
+        api_client: ApiClient,
+        setup_user: dict,
+        db_connection: DatabaseHelper
+    ):
+        response = api_client.patch_user(setup_user['id'], DataHelper.updated_user_data(setup_user))
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                UserPostModel,
+                response.json(),
+            )
+        with allure.step('Проверить данные пользователя в БД'):
             AssertionHelper.assert_user_from_db(response.json(), db_connection)
 
     @allure.story('Удалить пользователя')

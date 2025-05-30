@@ -50,3 +50,10 @@ class DataHelper:
             "password": fake.password(length=8),
             "roles": ["subscriber"]
         }
+
+    @staticmethod
+    @allure.step('Сформировать новые значения полей для существующего пользователя')
+    def updated_user_data(user_data: dict) -> dict:
+        return {
+            "email": f'Updated_{user_data["email"]}',
+        }

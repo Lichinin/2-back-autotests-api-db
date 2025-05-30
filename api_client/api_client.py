@@ -74,10 +74,10 @@ class ApiClient(BaseApiClient):
 
         return self._post(url, json=user_data)
 
-    # @allure.step('Редактировать пост по ID')
-    # def patch_post(self, id: int, post_data: dict) -> requests.Response:
-    #     url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/posts/{id}'
-    #     return self._patch(url, json=post_data)
+    @allure.step('Редактировать пользователя по ID')
+    def patch_user(self, id: int, user_data: dict) -> requests.Response:
+        url = f'{APiRoutes.BASE_URL}{APiRoutes.API_VER}/users/{id}'
+        return self._patch(url, json=user_data)
 
     @allure.step('Удалить пользователя по ID')
     def delete_user(self, user_id: int) -> requests.Response:
