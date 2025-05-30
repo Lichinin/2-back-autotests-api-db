@@ -72,7 +72,7 @@ def setup_post(request, api_client):
 
     for post in posts_list:
         logger.info(f'====> Fixture: Delete post (id={post["id"]}) for test')
-        api_client.delete_user(post['id'])
+        api_client.delete_post(post['id'])
     logger.info('====> Fixture setup exit')
 
 
@@ -121,6 +121,7 @@ def users_to_delete_list(api_client):
         logger.info(f"====> Teardown: Delete user with ID={user['id']}")
         api_client.delete_user(user['id'])
 
+
 @pytest.fixture
 def created_user(api_client):
     logger = logging.getLogger("fixture.created_user")
@@ -131,3 +132,23 @@ def created_user(api_client):
     logger.info(f'====> Created post with ID={user_data["id"]}')
 
     return user_data
+
+
+@pytest.fixture
+def setup_user(request, api_client):
+    logger = logging.getLogger(f'fixture.{request.fixturename}')
+    logger.info('====> Fixture setup started')
+    users_list = []
+    num_entities = request.param if hasattr(request, 'param') else 1
+    for _ in range(num_entities):
+        logger.info('====> Fixture: Try create user for test')
+        response = api_client.create_user(DataHelper.user_setup_data())
+        logger.info(f'====> Fixture: Successful create user (id={response.json()["id"]}) for test.')
+        users_list.append(response.json())
+
+    yield users_list[0] if num_entities == 1 else users_list
+
+    for user in users_list:
+        logger.info(f'====> Fixture: Delete user (id={user["id"]}) for test')
+        api_client.delete_user(user['id'])
+    logger.info('====> Fixture setup exit')

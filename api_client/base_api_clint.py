@@ -42,8 +42,15 @@ class BaseApiClient:
             raise
 
     @allure.step('Выполнить GET запрос')
-    def _get(self, url: str) -> requests.Response:
-        return self._make_request('GET', url)
+    def _get(self, url: str, headers: dict = None) -> requests.Response:
+        if headers is None:
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {self.auth_token}"
+            }
+        else:
+            headers["Authorization"] = f"Basic {self.auth_token}"
+        return self._make_request('GET', url, headers=headers)
 
     @allure.step('Выполнить POST запрос')
     def _post(

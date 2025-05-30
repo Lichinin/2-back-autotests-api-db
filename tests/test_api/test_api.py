@@ -6,7 +6,7 @@ from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
 from helpers.db_helper import DatabaseHelper
 from schemas.schemas import (CommentModel, DeleteCommentModel, DeletePostModel,
-                             PostModel, DeleteUserModel, UserPostModel)
+                             PostModel, DeleteUserModel, UserGetModel, UserPostModel)
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
@@ -191,6 +191,21 @@ class TestCommentsApi:
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
 @allure.suite('Тестирование API для работы с пользователями')
 class TestUsersApi:
+
+    @allure.story('Получить список всех пользователей')
+    @allure.title('USERS_API_01: Проверка получения списка всех пользователей')
+    @pytest.mark.parametrize("setup_user", [3], indirect=True)
+    def test_get_all_users(self, setup_user, api_client: ApiClient):
+        response = api_client.get_all_users()
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                UserGetModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что список пользователей содержит нужное количество записей'):
+            assert len(response.json()) >= len(setup_user), \
+                f'Ожидается минимум {len(setup_user)} пользователей, получено {len(response.json())}'
 
     @allure.story('Создать пользователя')
     @allure.title('USERS_API_03: Проверка создания пользователя')
