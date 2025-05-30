@@ -6,7 +6,8 @@ from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
 from helpers.db_helper import DatabaseHelper
 from schemas.schemas import (CommentModel, DeleteCommentModel, DeletePostModel,
-                             PostModel, DeleteUserModel, UserGetModel, UserPostModel)
+                             DeleteUserModel, PostModel, UserGetModel,
+                             UserPostModel)
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
@@ -268,6 +269,6 @@ class TestUsersApi:
                 DeleteUserModel,
                 response.json(),
             )
-        with allure.step('Проверить данные удалённого комментария'):
+        with allure.step('Проверить данные удалённого пользователя'):
             assert response.json()['deleted'] is True
             assert response.json()['previous']['id'] == created_user['id']

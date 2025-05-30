@@ -89,7 +89,6 @@ class AssertionHelper:
             logger.info(f'* Assert comment_id={id} in id_list={all_comments_ids}')
             assert id in all_comments_ids
 
-
     @staticmethod
     @allure.step('Получить и проверить пользователя в базе данных')
     def assert_user_from_db(
