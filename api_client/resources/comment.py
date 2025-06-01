@@ -1,7 +1,7 @@
 import allure
 import requests
 
-from api_client.base_api_clint import BaseApiClient
+from api_client.base_api_client import BaseApiClient
 from config import APiRoutes
 
 
