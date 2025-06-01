@@ -18,7 +18,7 @@ class TestPostsApi:
     @allure.title('POSTS_API_01: Проверка получения всех постов')
     @pytest.mark.parametrize("setup_post", [3], indirect=True)
     def test_get_all_posts(self, setup_post: list, api_client: ApiClient):
-        response = api_client.get_all_posts()
+        response = api_client.posts.get_all_posts()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -32,7 +32,7 @@ class TestPostsApi:
     @allure.story('Получить пост')
     @allure.title('POSTS_API_02: Проверка получения поста по его ID')
     def test_get_post_by_id(self, setup_post: dict, api_client: ApiClient):
-        response = api_client.get_post_by_id(setup_post['id'])
+        response = api_client.posts.get_post_by_id(setup_post['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -51,7 +51,7 @@ class TestPostsApi:
         db_connection: DatabaseHelper,
         posts_to_delete_list: list
     ):
-        response = api_client.create_post(DataHelper.post_setup_data())
+        response = api_client.posts.create_post(DataHelper.post_setup_data())
         posts_to_delete_list.append(response.json())
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -70,7 +70,7 @@ class TestPostsApi:
         setup_post: dict,
         db_connection: DatabaseHelper
     ):
-        response = api_client.patch_post(setup_post['id'], DataHelper.updated_post_data(setup_post))
+        response = api_client.posts.patch_post(setup_post['id'], DataHelper.updated_post_data(setup_post))
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -83,7 +83,7 @@ class TestPostsApi:
     @allure.story('Удалить пост')
     @allure.title('POSTS_API_05: Проверка удаления поста')
     def test_delete_post(self, api_client: ApiClient, created_post: dict):
-        response = api_client.delete_post(created_post['id'])
+        response = api_client.posts.delete_post(created_post['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -106,9 +106,9 @@ class TestCommentsApi:
         with allure.step('Создать комментарии для теста'):
             created_comments_ids = []
             for post in setup_post:
-                comment = api_client.create_comment(DataHelper.comment_setup_data(post['id'])).json()
+                comment = api_client.comments.create_comment(DataHelper.comment_setup_data(post['id'])).json()
                 created_comments_ids.append(comment['id'])
-        response = api_client.get_all_comments()
+        response = api_client.comments.get_all_comments()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -122,8 +122,8 @@ class TestCommentsApi:
     @allure.title('COMMENTS_API_02: Проверка получения комментария по его ID')
     def test_get_comment_by_id(self, setup_post: dict, api_client: ApiClient):
         with allure.step('Создать комментарий для теста'):
-            comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
-        response = api_client.get_comment_by_id(comment['id'])
+            comment = api_client.comments.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
+        response = api_client.comments.get_comment_by_id(comment['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -142,7 +142,7 @@ class TestCommentsApi:
         api_client: ApiClient,
         db_connection: DatabaseHelper
     ):
-        response = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id']))
+        response = api_client.comments.create_comment(DataHelper.comment_setup_data(setup_post['id']))
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -161,8 +161,8 @@ class TestCommentsApi:
         db_connection: DatabaseHelper,
     ):
         with allure.step('Создать комментарий для теста'):
-            comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
-        response = api_client.patch_comment(comment['id'], DataHelper.updated_comment_data(comment))
+            comment = api_client.comments.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
+        response = api_client.comments.patch_comment(comment['id'], DataHelper.updated_comment_data(comment))
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -176,8 +176,8 @@ class TestCommentsApi:
     @allure.title('COMMENTS_API_05: Проверка удаления комментария')
     def test_delete_comment(self, setup_post: dict, api_client: ApiClient):
         with allure.step('Создать комментарий для теста'):
-            comment = api_client.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
-        response = api_client.delete_comment(comment['id'])
+            comment = api_client.comments.create_comment(DataHelper.comment_setup_data(setup_post['id'])).json()
+        response = api_client.comments.delete_comment(comment['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -197,7 +197,7 @@ class TestUsersApi:
     @allure.title('USERS_API_01: Проверка получения списка всех пользователей')
     @pytest.mark.parametrize("setup_user", [3], indirect=True)
     def test_get_all_users(self, setup_user, api_client: ApiClient):
-        response = api_client.get_all_users()
+        response = api_client.users.get_all_users()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -211,7 +211,7 @@ class TestUsersApi:
     @allure.story('Получить пользователя')
     @allure.title('USERS_API_02: Проверка получения пользователя по его ID')
     def test_get_user_by_id(self, setup_user: dict, api_client: ApiClient):
-        response = api_client.get_user_by_id(setup_user['id'])
+        response = api_client.users.get_user_by_id(setup_user['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -230,7 +230,7 @@ class TestUsersApi:
         db_connection: DatabaseHelper,
         users_to_delete_list: list
     ):
-        response = api_client.create_user(DataHelper.user_setup_data())
+        response = api_client.users.create_user(DataHelper.user_setup_data())
         users_to_delete_list.append(response.json())
         AssertionHelper.check_status_code(response.status_code, 201)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -249,7 +249,7 @@ class TestUsersApi:
         setup_user: dict,
         db_connection: DatabaseHelper
     ):
-        response = api_client.patch_user(setup_user['id'], DataHelper.updated_user_data(setup_user))
+        response = api_client.users.patch_user(setup_user['id'], DataHelper.updated_user_data(setup_user))
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
@@ -262,7 +262,7 @@ class TestUsersApi:
     @allure.story('Удалить пользователя')
     @allure.title('USERS_API_05: Проверка удаления пользователя')
     def test_delete_user(self, created_user: dict, api_client: ApiClient):
-        response = api_client.delete_user(created_user['id'])
+        response = api_client.users.delete_user(created_user['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
             ValidationHelper.validate_via_pydantic(
