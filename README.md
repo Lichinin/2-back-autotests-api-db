@@ -174,7 +174,10 @@ pytest
 allure serve allure-results
 ```
 * Summary по тестам:
+![image](https://github.com/user-attachments/assets/a9f43eb5-0f20-4995-9381-76faffe099c5)
 
 * Тесткейсы:
+![image](https://github.com/user-attachments/assets/448600b9-8833-4e58-bbed-d013537d6359)
 
 * Пример отчета по тесткейсу:
+![image](https://github.com/user-attachments/assets/20760773-2916-426b-ad17-c57680d6138d)
