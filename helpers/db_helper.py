@@ -2,7 +2,7 @@ import os
 
 import mysql.connector
 from dotenv import load_dotenv
-from mysql.connector import InterfaceError, DatabaseError, ProgrammingError
+from mysql.connector import DatabaseError, InterfaceError, ProgrammingError
 
 load_dotenv()
 

@@ -124,10 +124,7 @@ class TestCommentsApi:
     @pytest.mark.parametrize("setup_post", [3], indirect=True)
     def test_get_all_comments(self, setup_post: list, api_client: ApiClient):
         with allure.step('Создать комментарии для теста'):
-            created_comments_ids = []
-            for post in setup_post:
-                comment = api_client.comments.create_comment(DataHelper.comment_setup_data(post['id'])).json()
-                created_comments_ids.append(comment['id'])
+            created_comments_ids = DataHelper.create_comments_id_list(setup_post, api_client)
         response = api_client.comments.get_all_comments()
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):

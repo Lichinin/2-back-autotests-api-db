@@ -1,6 +1,8 @@
 import allure
 from faker import Faker
 
+from api_client.api_client import ApiClient
+
 fake = Faker()
 
 
@@ -57,3 +59,12 @@ class DataHelper:
         return {
             "email": f'Updated_{user_data["email"]}',
         }
+
+    @staticmethod
+    @allure.step('Подготовить комментарии для теста и вернуть список их ID')
+    def create_comments_id_list(posts: list, api_client: ApiClient) -> list:
+        created_comments_ids = []
+        for post in posts:
+            comment = api_client.comments.create_comment(DataHelper.comment_setup_data(post['id'])).json()
+            created_comments_ids.append(comment['id'])
+        return created_comments_ids
