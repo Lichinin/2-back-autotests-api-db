@@ -2,7 +2,7 @@ import os
 
 import mysql.connector
 from dotenv import load_dotenv
-from mysql.connector import Error
+from mysql.connector import InterfaceError, DatabaseError, ProgrammingError
 
 load_dotenv()
 
@@ -33,8 +33,10 @@ class DatabaseHelper:
                 port=self.port
             )
             return self
-        except Error as e:
-            raise Exception(f"Ошибка подключения к БД: {e}")
+        except InterfaceError as e:
+            raise ConnectionError(f"Не удалось подключиться к MySQL: {e}") from e
+        except DatabaseError as e:
+            raise RuntimeError(f"Ошибка базы данных: {e}") from e
 
     def execute_query(self, query: str, params=None):
         cursor = self.connection.cursor(dictionary=True)
@@ -42,9 +44,11 @@ class DatabaseHelper:
             cursor.execute(query, params or ())
             result = cursor.fetchone()
             return result
-        except Error as e:
+        except ProgrammingError as e:
             cursor.close()
-            raise Exception(f"Ошибка выполнения запроса: {e}")
+            raise ValueError(f"Некорректный SQL-запрос: {e}") from e
+        except DatabaseError as e:
+            raise RuntimeError(f"Ошибка базы данных: {e}") from e
 
     def close_connection(self):
         if self.connection and self.connection.is_connected():
