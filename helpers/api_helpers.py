@@ -42,40 +42,47 @@ class AssertionHelper:
                 f'Excepted status code {expected_status_code}, got {actual_status_code}'
 
     @staticmethod
-    @allure.step('Получить и проверить пост в базе данных')
-    def assert_post_from_db(
+    @allure.step('Получить элемент в базе данных')
+    def get_entity_from_db(
+        table_name: str,
+        column: str,
         created_element: dict,
         db: DatabaseHelper
     ):
         logger = logging.getLogger('Get post form database')
         logger.info('* Execute query')
-        result = db.execute_query(
-            f"SELECT * FROM wp_posts WHERE id = {created_element['id']}",
+        query = db.execute_query(
+            f"SELECT * FROM {table_name} WHERE {column} = {created_element['id']}",
         )
-        logger.info(f'* Assert {created_element["id"]} == {result["ID"]}')
-        assert created_element['id'] == result['ID']
-        logger.info(f'* Assert {created_element["title"]["raw"]} == {result["post_title"]}')
-        assert created_element['title']['raw'] == result['post_title']
-        logger.info(f'* Assert {created_element["content"]["raw"]} == {result["post_content"]}')
-        assert created_element["content"]["raw"] == result['post_content']
+        return query
 
     @staticmethod
-    @allure.step('Получить и проверить комментарий в базе данных')
-    def assert_comment_from_db(
-        created_element: dict,
-        db: DatabaseHelper
+    @allure.step('Проверить пост в базе данных')
+    def assert_post_from_db(
+        api_element: dict,
+        db_element: dict
     ):
-        logger = logging.getLogger('Get comment form database')
-        logger.info('* Execute query')
-        result = db.execute_query(
-            f"SELECT * FROM wp_comments WHERE comment_id = {created_element['id']}",
-        )
-        logger.info(f'* Assert {created_element["id"]} == {result["comment_ID"]}')
-        assert created_element['id'] == result['comment_ID']
-        logger.info(f'* Assert {created_element["author_name"]} == {result["comment_author"]}')
-        assert created_element['author_name'] == result['comment_author']
-        logger.info(f'* Assert {created_element["content"]["raw"]} == {result["comment_content"]}')
-        assert created_element["content"]["raw"] == result['comment_content']
+        logger = logging.getLogger('Assert post form database')
+        logger.info(f'* Assert {api_element["id"]} == {db_element["ID"]}')
+        assert api_element['id'] == db_element['ID']
+        logger.info(f'* Assert {api_element["title"]["raw"]} == {db_element["post_title"]}')
+        assert api_element['title']['raw'] == db_element['post_title']
+        logger.info(f'* Assert {api_element["content"]["raw"]} == {db_element["post_content"]}')
+        assert api_element["content"]["raw"] == db_element['post_content']
+
+    @staticmethod
+    @allure.step('Проверить комментарий в базе данных')
+    def assert_comment_from_db(
+        api_element: dict,
+        db_element: dict
+    ):
+        logger = logging.getLogger('Assert comment form database')
+        logger.info(f'* Assert {api_element["id"]} == {db_element["comment_ID"]}')
+        assert api_element['id'] == db_element['comment_ID']
+        logger.info(f'* Assert {api_element["author_name"]} == {db_element["comment_author"]}')
+        assert api_element['author_name'] == db_element['comment_author']
+        logger.info(f'* Assert {api_element["content"]["raw"]} == {db_element["comment_content"]}')
+        assert api_element["content"]["raw"] == db_element['comment_content']
 
     @staticmethod
     @allure.step('Проверить, что созданные для теста комментарии есть в списке полученных')
@@ -92,19 +99,15 @@ class AssertionHelper:
     @staticmethod
     @allure.step('Получить и проверить пользователя в базе данных')
     def assert_user_from_db(
-        created_element: dict,
-        db: DatabaseHelper
+        api_element: dict,
+        db_element: dict
     ):
-        logger = logging.getLogger('Get user form database')
-        logger.info('* Execute query')
-        result = db.execute_query(
-            f"SELECT * FROM wp_users WHERE id = {created_element['id']}",
-        )
-        logger.info(f'* Assert {created_element["id"]} == {result["ID"]}')
-        assert created_element['id'] == result['ID']
-        logger.info(f'* Assert {created_element["name"]} == {result["display_name"]}')
-        assert created_element['name'] == result['display_name']
-        logger.info(f'* Assert {created_element["slug"]} == {result["user_nicename"]}')
-        assert created_element["slug"] == result['user_nicename']
-        logger.info(f'* Assert {created_element["email"]} == {result["user_email"]}')
-        assert created_element['email'] == result['user_email']
+        logger = logging.getLogger('Assert user form database')
+        logger.info(f'* Assert {api_element["id"]} == {db_element["ID"]}')
+        assert api_element['id'] == db_element['ID']
+        logger.info(f'* Assert {api_element["name"]} == {db_element["display_name"]}')
+        assert api_element['name'] == db_element['display_name']
+        logger.info(f'* Assert {api_element["slug"]} == {db_element["user_nicename"]}')
+        assert api_element["slug"] == db_element['user_nicename']
+        logger.info(f'* Assert {api_element["email"]} == {db_element["user_email"]}')
+        assert api_element['email'] == db_element['user_email']

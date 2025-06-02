@@ -59,8 +59,18 @@ class TestPostsApi:
                 PostModel,
                 response.json(),
             )
+        with allure.step('Получить пост из БД'):
+            db_post = AssertionHelper.get_entity_from_db(
+                'wp_posts',
+                'id',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные поста в БД'):
-            AssertionHelper.assert_post_from_db(response.json(), db_connection)
+            AssertionHelper.assert_post_from_db(
+                response.json(),
+                db_post
+            )
 
     @allure.story('Редактировать пост')
     @allure.title('POSTS_API_04: Проверка редактирования поста')
@@ -77,8 +87,18 @@ class TestPostsApi:
                 PostModel,
                 response.json(),
             )
+        with allure.step('Получить пост из БД'):
+            db_post = AssertionHelper.get_entity_from_db(
+                'wp_posts',
+                'id',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные поста в БД'):
-            AssertionHelper.assert_post_from_db(response.json(), db_connection)
+            AssertionHelper.assert_post_from_db(
+                response.json(),
+                db_post
+            )
 
     @allure.story('Удалить пост')
     @allure.title('POSTS_API_05: Проверка удаления поста')
@@ -149,8 +169,18 @@ class TestCommentsApi:
                 CommentModel,
                 response.json(),
             )
+        with allure.step('Получить комментарий из БД'):
+            db_comment = AssertionHelper.get_entity_from_db(
+                'wp_comments',
+                'comment_ID',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные комментария в БД'):
-            AssertionHelper.assert_comment_from_db(response.json(), db_connection)
+            AssertionHelper.assert_comment_from_db(
+                response.json(),
+                db_comment
+            )
 
     @allure.story('Редактировать комментарий')
     @allure.title('COMMENTS_API_04: Проверка редактирования комментария')
@@ -169,8 +199,18 @@ class TestCommentsApi:
                 CommentModel,
                 response.json(),
             )
+        with allure.step('Получить комментарий из БД'):
+            db_comment = AssertionHelper.get_entity_from_db(
+                'wp_comments',
+                'comment_ID',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные комментария в БД'):
-            AssertionHelper.assert_comment_from_db(response.json(), db_connection)
+            AssertionHelper.assert_comment_from_db(
+                response.json(),
+                db_comment
+            )
 
     @allure.story('Удалить комментарий')
     @allure.title('COMMENTS_API_05: Проверка удаления комментария')
@@ -238,8 +278,18 @@ class TestUsersApi:
                 UserPostModel,
                 response.json(),
             )
+        with allure.step('Получить пользователя из БД'):
+            db_user = AssertionHelper.get_entity_from_db(
+                'wp_users',
+                'id',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные пользователя в БД'):
-            AssertionHelper.assert_user_from_db(response.json(), db_connection)
+            AssertionHelper.assert_user_from_db(
+                response.json(),
+                db_user
+            )
 
     @allure.story('Редактировать пользователя')
     @allure.title('USERS_API_04: Проверка редактирования пользователя')
@@ -256,8 +306,18 @@ class TestUsersApi:
                 UserPostModel,
                 response.json(),
             )
+        with allure.step('Получить пользователя из БД'):
+            db_user = AssertionHelper.get_entity_from_db(
+                'wp_users',
+                'id',
+                response.json(),
+                db_connection
+            )
         with allure.step('Проверить данные пользователя в БД'):
-            AssertionHelper.assert_user_from_db(response.json(), db_connection)
+            AssertionHelper.assert_user_from_db(
+                response.json(),
+                db_user
+            )
 
     @allure.story('Удалить пользователя')
     @allure.title('USERS_API_05: Проверка удаления пользователя')
