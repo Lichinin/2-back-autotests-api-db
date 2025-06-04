@@ -4,6 +4,9 @@ import pytest
 from api_client.api_client import ApiClient
 from helpers.api_helpers import AssertionHelper, ValidationHelper
 from helpers.data_helpers import DataHelper
+from helpers.db_clients.comment_db_client import CommentDbClient
+from helpers.db_clients.post_db_client import PostDbClient
+from helpers.db_clients.user_db_client import UserDbClient
 from helpers.db_helper import DatabaseHelper
 from schemas.schemas import (CommentModel, DeleteCommentModel, DeletePostModel,
                              DeleteUserModel, PostModel, UserGetModel,
@@ -60,11 +63,9 @@ class TestPostsApi:
                 response.json(),
             )
         with allure.step('Получить пост из БД'):
-            db_post = AssertionHelper.get_entity_from_db(
-                'wp_posts',
-                'id',
-                response.json(),
-                db_connection
+            post_db_client = PostDbClient(db_connection)
+            db_post = post_db_client.get_post_by_id(
+                response.json()
             )
         with allure.step('Проверить данные поста в БД'):
             AssertionHelper.assert_post_from_db(
@@ -88,11 +89,9 @@ class TestPostsApi:
                 response.json(),
             )
         with allure.step('Получить пост из БД'):
-            db_post = AssertionHelper.get_entity_from_db(
-                'wp_posts',
-                'id',
-                response.json(),
-                db_connection
+            post_db_client = PostDbClient(db_connection)
+            db_post = post_db_client.get_post_by_id(
+                response.json()
             )
         with allure.step('Проверить данные поста в БД'):
             AssertionHelper.assert_post_from_db(
@@ -167,11 +166,9 @@ class TestCommentsApi:
                 response.json(),
             )
         with allure.step('Получить комментарий из БД'):
-            db_comment = AssertionHelper.get_entity_from_db(
-                'wp_comments',
-                'comment_ID',
-                response.json(),
-                db_connection
+            comment_db_client = CommentDbClient(db_connection)
+            db_comment = comment_db_client.get_comment_by_id(
+                response.json()
             )
         with allure.step('Проверить данные комментария в БД'):
             AssertionHelper.assert_comment_from_db(
@@ -197,11 +194,9 @@ class TestCommentsApi:
                 response.json(),
             )
         with allure.step('Получить комментарий из БД'):
-            db_comment = AssertionHelper.get_entity_from_db(
-                'wp_comments',
-                'comment_ID',
-                response.json(),
-                db_connection
+            comment_db_client = CommentDbClient(db_connection)
+            db_comment = comment_db_client.get_comment_by_id(
+                response.json()
             )
         with allure.step('Проверить данные комментария в БД'):
             AssertionHelper.assert_comment_from_db(
@@ -276,11 +271,9 @@ class TestUsersApi:
                 response.json(),
             )
         with allure.step('Получить пользователя из БД'):
-            db_user = AssertionHelper.get_entity_from_db(
-                'wp_users',
-                'id',
-                response.json(),
-                db_connection
+            user_db_client = UserDbClient(db_connection)
+            db_user = user_db_client.get_user_by_id(
+                response.json()
             )
         with allure.step('Проверить данные пользователя в БД'):
             AssertionHelper.assert_user_from_db(
@@ -304,11 +297,9 @@ class TestUsersApi:
                 response.json(),
             )
         with allure.step('Получить пользователя из БД'):
-            db_user = AssertionHelper.get_entity_from_db(
-                'wp_users',
-                'id',
-                response.json(),
-                db_connection
+            user_db_client = UserDbClient(db_connection)
+            db_user = user_db_client.get_user_by_id(
+                response.json()
             )
         with allure.step('Проверить данные пользователя в БД'):
             AssertionHelper.assert_user_from_db(

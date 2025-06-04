@@ -3,8 +3,6 @@ import logging
 import allure
 from pydantic import ValidationError
 
-from helpers.db_helper import DatabaseHelper
-
 
 class ValidationHelper:
 
@@ -40,21 +38,6 @@ class AssertionHelper:
     ):
         assert actual_status_code == expected_status_code, \
                 f'Excepted status code {expected_status_code}, got {actual_status_code}'
-
-    @staticmethod
-    @allure.step('Получить элемент в базе данных')
-    def get_entity_from_db(
-        table_name: str,
-        column: str,
-        created_element: dict,
-        db: DatabaseHelper
-    ):
-        logger = logging.getLogger('Get post form database')
-        logger.info('* Execute query')
-        query = db.execute_query(
-            f"SELECT * FROM {table_name} WHERE {column} = {created_element['id']}",
-        )
-        return query
 
     @staticmethod
     @allure.step('Проверить пост в базе данных')
