@@ -6,9 +6,10 @@ import pytest
 from api_client.api_client import ApiClient
 from config import Paths
 from helpers.data_helpers import DataHelper
+from helpers.db_clients.comment_db_client import CommentDbClient
+from helpers.db_clients.post_db_client import PostDbClient
 from helpers.db_clients.user_db_client import UserDbClient
 from helpers.db_helper import DatabaseHelper
-from helpers.db_clients.post_db_client import PostDbClient
 
 
 @pytest.fixture(autouse=True)
@@ -171,9 +172,14 @@ def setup_post_by_db(request, db_connection):
 
     yield posts_list[0] if num_entities == 1 else posts_list
 
+    comment_db_client = CommentDbClient(db_connection)
     for post in posts_list:
+        logger.info(f'====> Fixture: Delete comments for post (id={post["id"]})')
+        comment_db_client.delete_comments_by_post_id(post["id"])
+
         logger.info(f'====> Fixture: Delete post by sql (id={post["id"]}) for test')
         post_db_client.delete_post_by_id_db(post['id'])
+
     logger.info('====> Fixture setup exit')
 
 

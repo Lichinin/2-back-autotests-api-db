@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import allure
 from faker import Faker
 
@@ -76,14 +77,15 @@ class DbDataHelper:
     @staticmethod
     def prepare_post_data() -> dict:
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
+        title = fake.sentence()
         return {
             'post_date': now,
             'post_date_gmt': now,
             'post_modified': now,
             'post_modified_gmt': now,
             'post_content': fake.sentence(),
-            'post_title': fake.sentence(),
+            'post_title': title,
+            'post_name': fake.slug(title),
             'post_excerpt': '',
             'post_status': 'publish',
             'to_ping': '',
@@ -102,4 +104,18 @@ class DbDataHelper:
             'user_email': fake.email(),
             'user_pass': fake.password(length=8),
             'display_name': name
+        }
+
+    @staticmethod
+    @allure.step('Сформировать значения полей нового комментария')
+    def prepare_comment_data(post_id: int) -> dict:
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        return {
+            "comment_date": now,
+            "comment_date_gmt": now,
+            "comment_post_ID": post_id,
+            "comment_author": fake.name(),
+            "comment_author_email": fake.email(),
+            "comment_content": fake.sentence(),
         }

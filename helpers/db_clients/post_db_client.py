@@ -2,8 +2,8 @@ import logging
 
 import allure
 
-from helpers.db_helper import DatabaseHelper
 from helpers.data_helpers import DbDataHelper
+from helpers.db_helper import DatabaseHelper
 
 
 class PostDbClient:
@@ -37,12 +37,13 @@ class PostDbClient:
                 post_modified_gmt,
                 post_content,
                 post_title,
+                post_name,
                 post_excerpt,
                 post_status,
                 to_ping,
                 pinged,
                 post_content_filtered
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
             data['post_date'],
@@ -51,6 +52,7 @@ class PostDbClient:
             data['post_modified_gmt'],
             data['post_content'],
             data['post_title'],
+            data['post_name'],
             data['post_excerpt'],
             data['post_status'],
             data['to_ping'],
