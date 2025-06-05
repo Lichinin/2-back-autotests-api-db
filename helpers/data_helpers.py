@@ -90,3 +90,16 @@ class DbDataHelper:
             'pinged': '',
             'post_content_filtered': ''
         }
+
+    @staticmethod
+    def prepare_user_data() -> dict:
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        name = fake.name()
+
+        return {
+            'user_registered': now,
+            'user_login': name,
+            'user_email': fake.email(),
+            'user_pass': fake.password(length=8),
+            'display_name': name
+        }

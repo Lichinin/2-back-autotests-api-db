@@ -6,6 +6,7 @@ import pytest
 from api_client.api_client import ApiClient
 from config import Paths
 from helpers.data_helpers import DataHelper
+from helpers.db_clients.user_db_client import UserDbClient
 from helpers.db_helper import DatabaseHelper
 from helpers.db_clients.post_db_client import PostDbClient
 
@@ -156,7 +157,7 @@ def setup_user(request, api_client):
 
 
 @pytest.fixture
-def setup_post_by_db(request, api_client, db_connection):
+def setup_post_by_db(request, db_connection):
     logger = logging.getLogger(f'fixture.{request.fixturename}')
     logger.info('====> Fixture setup posts by db started')
     posts_list = []
@@ -173,4 +174,25 @@ def setup_post_by_db(request, api_client, db_connection):
     for post in posts_list:
         logger.info(f'====> Fixture: Delete post by sql (id={post["id"]}) for test')
         post_db_client.delete_post_by_id_db(post['id'])
+    logger.info('====> Fixture setup exit')
+
+
+@pytest.fixture
+def setup_user_by_db(request, db_connection):
+    logger = logging.getLogger(f'fixture.{request.fixturename}')
+    logger.info('====> Fixture setup started')
+    users_list = []
+    num_entities = request.param if hasattr(request, 'param') else 1
+    for _ in range(num_entities):
+        logger.info('====> Fixture: Try create user for test by sql')
+        user_db_client = UserDbClient(db_connection)
+        user = user_db_client.create_user_in_db()
+        logger.info(f'====> Fixture: Successful create user (id={user["id"]}) for test.')
+        users_list.append(user)
+
+    yield users_list[0] if num_entities == 1 else users_list
+
+    for user in users_list:
+        logger.info(f'====> Fixture: Delete user (id={user["id"]}) for test')
+        user_db_client.delete_user_by_id_db(user['id'])
     logger.info('====> Fixture setup exit')

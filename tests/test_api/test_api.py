@@ -323,7 +323,7 @@ class TestUsersApi:
 
 
 @allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
-@allure.suite('Тестирование API для работы с пользователями. Работа с данными через DB')
+@allure.suite('Тестирование API для работы с постами. Работа с данными через DB')
 class TestPostDb:
 
     @allure.story('Получить все посты, созданные через SQL')
@@ -343,7 +343,7 @@ class TestPostDb:
 
     @allure.story('Получить пост, созданный через SQL')
     @allure.title('POSTS_DB_02: Проверка получения поста по его ID, созданного через SQL')
-    def test_get_post_by_id(self, setup_post_by_db: dict, api_client: ApiClient):
+    def test_get_post_by_id_db(self, setup_post_by_db: dict, api_client: ApiClient):
         response = api_client.posts.get_post_by_id(setup_post_by_db['id'])
         AssertionHelper.check_status_code(response.status_code, 200)
         with allure.step('Проверить схему ответа с помощью pydantic'):
@@ -356,3 +356,39 @@ class TestPostDb:
                 f'Ожидается пост с id = {setup_post_by_db["id"]}, получен пост с id = {response.json()["id"]}'
             assert response.json()['title']['rendered'] == setup_post_by_db['title'], \
                 f'Ожидается title = {setup_post_by_db["title"]}, получен title = {response.json()["title"]["rendered"]}'
+
+
+@allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
+@allure.suite('Тестирование API для работы с пользователями. Работа с данными через DB')
+class TestUserDb:
+
+    @allure.story('Получить всех пользователей, созданных через SQL')
+    @allure.title('POSTS_DB_01: Проверка получения всех пользователей, созданных через SQL')
+    @pytest.mark.parametrize("setup_user_by_db", [3], indirect=True)
+    def test_get_all_posts_db(self, setup_user_by_db: list, api_client: ApiClient):
+        response = api_client.users.get_all_users()
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                UserGetModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что список пользователей содержит нужное количество записей'):
+            assert len(response.json()) >= len(setup_user_by_db), \
+                f'Ожидается минимум {len(setup_user_by_db)} постов, получено {len(response.json())}'
+
+    @allure.story('Получить пользователя, созданного через SQL')
+    @allure.title('POSTS_DB_02: Проверка получения пользователя по его ID, созданного через SQL')
+    def test_get_user_by_id(self, setup_user_by_db: dict, api_client: ApiClient):
+        response = api_client.users.get_user_by_id(setup_user_by_db['id'])
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                UserGetModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что получили ожидаемого пользователя'):
+            assert response.json()['id'] == setup_user_by_db['id'], \
+                f'Ожидается пользователь с id = {setup_user_by_db["id"]}, получен с id = {response.json()["id"]}'
+            assert response.json()['name'] == setup_user_by_db['user_login'], \
+                f'Ожидается name = {setup_user_by_db["user_login"]}, получен name = {response.json()["name"]}'
