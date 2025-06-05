@@ -50,6 +50,15 @@ class DatabaseHelper:
         except DatabaseError as e:
             raise RuntimeError(f"Ошибка базы данных: {e}") from e
 
+    def insert_and_get_lastrowid(self, query: str, params=None):
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query, params or ())
+            self.connection.commit()
+            return cursor.lastrowid
+        finally:
+            cursor.close()
+
     def close_connection(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()
