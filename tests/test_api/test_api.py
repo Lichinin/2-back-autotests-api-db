@@ -320,3 +320,39 @@ class TestUsersApi:
         with allure.step('Проверить данные удалённого пользователя'):
             assert response.json()['deleted'] is True
             assert response.json()['previous']['id'] == created_user['id']
+
+
+@allure.epic('SimbirSoft SDET практикум. Блок 2. API, DB')
+@allure.suite('Тестирование API для работы с пользователями. Работа с данными через DB')
+class TestPostDb:
+
+    @allure.story('Получить все посты, созданные через SQL')
+    @allure.title('POSTS_DB_01: Проверка получения всех постов, созданных через SQL')
+    @pytest.mark.parametrize("setup_post_by_db", [3], indirect=True)
+    def test_get_all_posts_db(self, setup_post_by_db: list, api_client: ApiClient):
+        response = api_client.posts.get_all_posts()
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                PostModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что список постов содержит нужное количество записей'):
+            assert len(response.json()) >= len(setup_post_by_db), \
+                f'Ожидается минимум {len(setup_post_by_db)} постов, получено {len(response.json())}'
+
+    @allure.story('Получить пост, созданный через SQL')
+    @allure.title('POSTS_DB_02: Проверка получения поста по его ID, созданного через SQL')
+    def test_get_post_by_id(self, setup_post_by_db: dict, api_client: ApiClient):
+        response = api_client.posts.get_post_by_id(setup_post_by_db['id'])
+        AssertionHelper.check_status_code(response.status_code, 200)
+        with allure.step('Проверить схему ответа с помощью pydantic'):
+            ValidationHelper.validate_via_pydantic(
+                PostModel,
+                response.json(),
+            )
+        with allure.step('Проверить, что получили ожидаемый пост'):
+            assert response.json()['id'] == setup_post_by_db['id'], \
+                f'Ожидается пост с id = {setup_post_by_db["id"]}, получен пост с id = {response.json()["id"]}'
+            assert response.json()['title']['rendered'] == setup_post_by_db['title'], \
+                f'Ожидается title = {setup_post_by_db["title"]}, получен title = {response.json()["title"]["rendered"]}'

@@ -1,3 +1,4 @@
+from datetime import datetime
 import allure
 from faker import Faker
 
@@ -68,3 +69,24 @@ class DataHelper:
             comment = api_client.comments.create_comment(DataHelper.comment_setup_data(post['id'])).json()
             created_comments_ids.append(comment['id'])
         return created_comments_ids
+
+
+class DbDataHelper:
+
+    @staticmethod
+    def prepare_post_data() -> dict:
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        return {
+            'post_date': now,
+            'post_date_gmt': now,
+            'post_modified': now,
+            'post_modified_gmt': now,
+            'post_content': fake.sentence(),
+            'post_title': fake.sentence(),
+            'post_excerpt': '',
+            'post_status': 'publish',
+            'to_ping': '',
+            'pinged': '',
+            'post_content_filtered': ''
+        }
