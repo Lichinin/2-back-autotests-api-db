@@ -38,13 +38,7 @@ class UserDbClient:
                 display_name
             ) VALUES (%s, %s, %s, %s, %s)
         """
-        params = (
-            data['user_registered'],
-            data['user_login'],
-            data['user_email'],
-            data['user_pass'],
-            data['display_name']
-            )
+        params = tuple(data.values())
 
         user_id = self.db.insert_and_get_lastrowid(query, params)
         logger.info(f'User with ID={user_id} was created')

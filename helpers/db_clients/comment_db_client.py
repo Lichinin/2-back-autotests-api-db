@@ -39,14 +39,7 @@ class CommentDbClient:
                 comment_content
             ) VALUES (%s, %s, %s, %s, %s, %s)
         """
-        params = (
-            data['comment_date'],
-            data['comment_date_gmt'],
-            data['comment_post_ID'],
-            data['comment_author'],
-            data['comment_author_email'],
-            data['comment_content']
-            )
+        params = tuple(data.values())
 
         comment_id = self.db.insert_and_get_lastrowid(query, params)
         logger.info(f'Comment with ID={comment_id} was created')

@@ -45,20 +45,7 @@ class PostDbClient:
                 post_content_filtered
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        params = (
-            data['post_date'],
-            data['post_date_gmt'],
-            data['post_modified'],
-            data['post_modified_gmt'],
-            data['post_content'],
-            data['post_title'],
-            data['post_name'],
-            data['post_excerpt'],
-            data['post_status'],
-            data['to_ping'],
-            data['pinged'],
-            data['post_content_filtered']
-            )
+        params = tuple(data.values())
 
         post_id = self.db.insert_and_get_lastrowid(query, params)
         logger.info(f'Post with ID={post_id} was created')
