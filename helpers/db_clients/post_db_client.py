@@ -2,6 +2,7 @@ import logging
 
 import allure
 
+from helpers.data_helpers import DbDataHelper
 from helpers.db_helper import DatabaseHelper
 
 
@@ -22,8 +23,47 @@ class PostDbClient:
         )
         return query
 
-    def create_post_in_db(self, post_data: dict):
-        pass
+    def create_post_in_db(self):
+        logger = logging.getLogger('Creaty post by SQL')
+        logger.info('* Execute query')
 
-    def delete_post_by_id(self, post_id: int):
-        pass
+        data = DbDataHelper.prepare_post_data()
+
+        query = """
+            INSERT INTO wp_posts (
+                post_date,
+                post_date_gmt,
+                post_modified,
+                post_modified_gmt,
+                post_content,
+                post_title,
+                post_name,
+                post_excerpt,
+                post_status,
+                to_ping,
+                pinged,
+                post_content_filtered
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        params = tuple(data.values())
+
+        post_id = self.db.insert_and_get_lastrowid(query, params)
+        logger.info(f'Post with ID={post_id} was created')
+
+        return {
+            'id': post_id,
+            'title': data['post_title'],
+            'content': data['post_content'],
+            'status': data['post_status']
+        }
+
+    def delete_post_by_id_db(self, post_id: int):
+        logger = logging.getLogger('Delete post by ID (SQL)')
+        logger.info('* Execute query')
+
+        query = "DELETE FROM wp_posts WHERE ID = %s"
+        params = (post_id,)
+
+        self.db.execute_query(query, params)
+        self.db.connection.commit()
+        logger.info(f'Пост с ID={post_id} успешно удален из БД')
